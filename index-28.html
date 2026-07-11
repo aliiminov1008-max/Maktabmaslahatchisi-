@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Maktab Maslahatchisi</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #121815;
+    --card: #1d2621;
+    --card-hover: #232d27;
+    --sage: #6fa88f;
+    --sage-dark: #3f5c50;
+    --sand: #2a352e;
+    --sand-light: #1d2621;
+    --clay: #e2996f;
+    --ink: #8ec5f0;
+    --muted: #8fa199;
+    --line: rgba(233,237,233,0.08);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family: 'Manrope', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height:100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap{
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 28px 20px 40px;
+  }
+  .top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom: 28px;
+  }
+  .greeting-eyebrow{
+    font-size: 12.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sage);
+    font-weight: 700;
+    margin-bottom: 4px;
+    opacity: 1;
+  }
+  .greeting{
+    font-family:'Fraunces', serif;
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height:1.25;
+  }
+  .avatar{
+    width: 46px; height:46px;
+    border-radius: 50%;
+    background: var(--sage-dark);
+    display:flex; align-items:center; justify-content:center;
+    color:white; font-family:'Fraunces',serif; font-weight:600; font-size:18px;
+    flex-shrink:0;
+  }
+  .mood-strip{
+    background: var(--sand-light);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 16px 18px;
+    margin-bottom: 22px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .mood-strip-label{
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .mood-strip-sub{
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-top:2px;
+  }
+  .mood-emojis{ display:flex; gap:6px; }
+  .mood-emojis button{
+    border:none;
+    background: var(--sand);
+    width:38px; height:38px;
+    border-radius: 50%;
+    font-size:18px;
+    cursor:pointer;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  .mood-emojis button:active{ transform: scale(0.88); background: var(--card-hover); }
+  .mood-emojis button.selected{ background: var(--sage); }
+
+  .section-label{
+    font-size: 12.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 700;
+    margin: 22px 0 12px 4px;
+    opacity: 1;
+  }
+  .menu{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .card{
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 18px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    cursor:pointer;
+    text-align:left;
+    width:100%;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+  }
+  .card:active{ transform: scale(0.98); }
+  .card-icon{
+    width:46px; height:46px;
+    border-radius: 13px;
+    display:flex; align-items:center; justify-content:center;
+    font-size: 21px;
+    flex-shrink:0;
+  }
+  .icon-anon{ background: rgba(111,168,143,0.16); }
+  .icon-test{ background: rgba(226,153,111,0.16); }
+  .icon-mood{ background: rgba(180,140,220,0.16); }
+  .icon-ai{ background: rgba(111,168,200,0.16); }
+  .card-text{ flex:1; }
+  .card-title{ font-size:15.5px; font-weight:700; color:var(--ink); margin-bottom:2px; }
+  .card-sub{ font-size:13px; color:var(--muted); line-height:1.4; }
+  .card-arrow{ color: var(--muted); font-size:18px; }
+
+  .urgent-note{
+    margin-top: 26px;
+    background: var(--card);
+    border: 1px solid rgba(226,153,111,0.25);
+    color: var(--ink);
+    border-radius: 16px;
+    padding: 16px 18px;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  .urgent-note b{ color: var(--clay); font-family:'Fraunces',serif; font-size:14.5px; }
+
+  .screen{ display:none; }
+  .screen.active{ display:block; }
+  .back-btn{
+    background:none; border:none;
+    color: var(--sage);
+    font-weight:700;
+    font-size:14.5px;
+    margin-bottom: 18px;
+    cursor:pointer;
+    display:flex; align-items:center; gap:6px;
+  }
+  .placeholder-box{
+    background: var(--card);
+    border:1px dashed var(--line);
+    border-radius:16px;
+    padding: 40px 20px;
+    text-align:center;
+    color:var(--muted);
+    font-size:14px;
+    line-height:1.6;
+  }
+  .anon-box{
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 18px;
+  }
+  .anon-info{
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+  .anon-textarea{
+    width: 100%;
+    min-height: 140px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 14px;
+    color: var(--ink);
+    font-family: 'Manrope', sans-serif;
+    font-size: 14.5px;
+    line-height: 1.5;
+    resize: vertical;
+  }
+  .anon-textarea:focus{ outline: none; border-color: var(--sage); }
+  .anon-textarea::placeholder{ color: #5c6b63; }
+  .anon-counter{
+    text-align: right;
+    font-size: 12px;
+    color: var(--muted);
+    margin: 6px 4px 14px 0;
+  }
+  .anon-send{
+    width: 100%;
+    background: var(--sage);
+    color: var(--bg);
+    border: none;
+    border-radius: 14px;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Manrope', sans-serif;
+    cursor: pointer;
+    transition: transform 0.12s ease, opacity 0.15s ease;
+  }
+  .anon-send:active{ transform: scale(0.98); }
+  .anon-send:disabled{ opacity: 0.5; }
+  .anon-status{
+    margin-top: 12px;
+    font-size: 13px;
+    text-align: center;
+    color: var(--sage);
+    min-height: 18px;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- BOSH MENYU -->
+  <div id="home" class="screen active">
+    <div class="top">
+      <div>
+        <div class="greeting-eyebrow">Xush kelibsiz</div>
+        <div class="greeting">Qandaysiz?</div>
+      </div>
+      <div class="avatar" id="userInitial">A</div>
+    </div>
+
+    <div class="mood-strip">
+      <div>
+        <div class="mood-strip-label">Bugungi kayfiyatingiz</div>
+        <div class="mood-strip-sub">Bir marta bosing</div>
+      </div>
+      <div class="mood-emojis" id="moodEmojis">
+        <button data-mood="great">😄</button>
+        <button data-mood="ok">🙂</button>
+        <button data-mood="meh">😐</button>
+        <button data-mood="bad">😔</button>
+      </div>
+    </div>
+
+    <div class="section-label">Bo'limlar</div>
+    <div class="menu">
+      <button class="card" onclick="showScreen('anon')">
+        <div class="card-icon icon-anon">✉️</div>
+        <div class="card-text">
+          <div class="card-title">Anonim murojaat</div>
+          <div class="card-sub">Maslahatchiga yozing, ismingiz sir saqlanadi</div>
+        </div>
+        <div class="card-arrow">›</div>
+      </button>
+
+      <button class="card" onclick="showScreen('test')">
+        <div class="card-icon icon-test">🧭</div>
+        <div class="card-text">
+          <div class="card-title">Kasb yo'naltirish testi</div>
+          <div class="card-sub">O'zingizga mos kasbni aniqlang</div>
+        </div>
+        <div class="card-arrow">›</div>
+      </button>
+
+      <button class="card" onclick="showScreen('mood')">
+        <div class="card-icon icon-mood">📊</div>
+        <div class="card-text">
+          <div class="card-title">Kayfiyat kundaligi</div>
+          <div class="card-sub">Haftalik holatingizni kuzating</div>
+        </div>
+        <div class="card-arrow">›</div>
+      </button>
+
+      <button class="card" onclick="showScreen('ai')">
+        <div class="card-icon icon-ai">💬</div>
+        <div class="card-text">
+          <div class="card-title">AI yordamchi</div>
+          <div class="card-sub">Tezkor savollarga darhol javob</div>
+        </div>
+        <div class="card-arrow">›</div>
+      </button>
+    </div>
+
+    <div class="urgent-note">
+      <b>Muhim:</b> Agar o'zingizga yoki boshqa birovga zarar yetkazish xavfi bo'lsa, iltimos darhol ishonchli kattalarga yoki 1051 (Ishonch telefoni) raqamiga murojaat qiling.
+    </div>
+  </div>
+
+  <!-- ANONIM MUROJAAT -->
+  <div id="anon" class="screen">
+    <button class="back-btn" onclick="showScreen('home')">‹ Orqaga</button>
+    <div class="section-label">Anonim murojaat</div>
+    <div class="anon-box">
+      <div class="anon-info">Xabaringiz maslahatchiga ismingizsiz yetadi. Agar javob kerak bo'lsa, bot orqali sizga qaytariladi.</div>
+      <textarea id="anonText" class="anon-textarea" placeholder="Nima haqida gapirmoqchisiz? Bu yerga yozing..." maxlength="1000"></textarea>
+      <div class="anon-counter"><span id="anonCount">0</span>/1000</div>
+      <button class="anon-send" onclick="sendAnonMessage()">Yuborish</button>
+      <div id="anonStatus" class="anon-status"></div>
+    </div>
+  </div>
+
+  <!-- TEST -->
+  <div id="test" class="screen">
+    <button class="back-btn" onclick="showScreen('home')">‹ Orqaga</button>
+    <div class="section-label">Kasb yo'naltirish testi</div>
+    <div class="placeholder-box">Bu bo'lim keyingi bosqichda to'ldiriladi.</div>
+  </div>
+
+  <!-- MOOD -->
+  <div id="mood" class="screen">
+    <button class="back-btn" onclick="showScreen('home')">‹ Orqaga</button>
+    <div class="section-label">Kayfiyat kundaligi</div>
+    <div class="placeholder-box">Bu bo'lim keyingi bosqichda to'ldiriladi.</div>
+  </div>
+
+  <!-- AI -->
+  <div id="ai" class="screen">
+    <button class="back-btn" onclick="showScreen('home')">‹ Orqaga</button>
+    <div class="section-label">AI yordamchi</div>
+    <div class="placeholder-box">Bu bo'lim keyingi bosqichda to'ldiriladi.</div>
+  </div>
+
+</div>
+
+<script>
+  const tg = window.Telegram?.WebApp;
+  if (tg) {
+    tg.ready();
+    tg.expand();
+    const user = tg.initDataUnsafe?.user;
+    if (user?.first_name) {
+      document.getElementById('userInitial').textContent = user.first_name[0].toUpperCase();
+    }
+  }
+
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0,0);
+  }
+
+  document.querySelectorAll('.mood-emojis button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.mood-emojis button').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      // Keyingi bosqichda: shu yerda Google Sheets'ga yozish logikasi qo'shiladi
+    });
+  });
+
+  const anonText = document.getElementById('anonText');
+  const anonCount = document.getElementById('anonCount');
+  if (anonText) {
+    anonText.addEventListener('input', () => {
+      anonCount.textContent = anonText.value.length;
+    });
+  }
+
+  function sendAnonMessage() {
+    const text = anonText.value.trim();
+    const statusEl = document.getElementById('anonStatus');
+    if (!text) {
+      statusEl.textContent = 'Iltimos, xabar yozing.';
+      statusEl.style.color = '#e2996f';
+      return;
+    }
+    if (!tg) {
+      statusEl.textContent = 'Bu funksiya faqat Telegram ichida ishlaydi.';
+      statusEl.style.color = '#e2996f';
+      return;
+    }
+    tg.sendData(JSON.stringify({ type: 'anon_message', text: text }));
+    statusEl.textContent = 'Yuborildi. Rahmat!';
+    statusEl.style.color = '#6fa88f';
+    setTimeout(() => tg.close(), 900);
+  }
+</script>
+
+</body>
+</html>
