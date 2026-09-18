@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Sport — Attestatsiya</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0b1017; --bg2:#101c29; --surface:#142230; --card:#1a2b3a;
+    --accent:#4cae5c; --accent2:#8fe39a; --text:#f0f5ee;
+    --muted:#8da095; --green:#4caf7d; --red:#e05c5c;
+    --purple:#3a8fd1; --orange:#e0a05c; --border:rgba(76,174,92,0.18);
+    --shadow:0 10px 28px rgba(2,8,4,0.45);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;
+    background-image:radial-gradient(ellipse 90% 46% at 50% -14%,rgba(76,174,92,0.28) 0%,transparent 68%),radial-gradient(ellipse 46% 30% at 88% 78%,rgba(224,160,92,0.10) 0%,transparent 62%),radial-gradient(ellipse 40% 26% at 6% 92%,rgba(58,143,209,0.08) 0%,transparent 60%);}
+  .screen{display:none;animation:fadeIn 0.18s ease;}
+  .screen.active{display:block;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes float{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-6px) rotate(8deg)}}
+  @keyframes shimmer{0%{background-position:-120% 0}100%{background-position:220% 0}}
+  @keyframes driftBall{0%{left:-6%;opacity:0;transform:rotate(0deg)}10%{opacity:.95}90%{opacity:.95}100%{left:102%;opacity:0;transform:rotate(360deg)}}
+  .header{padding:26px 20px 18px;text-align:center;border-bottom:1px solid var(--border);background:linear-gradient(180deg,rgba(76,174,92,0.14) 0%,transparent 100%);position:relative;}
+  .header .note-icon{font-size:36px;margin-bottom:8px;display:block;animation:float 3s ease-in-out infinite;filter:drop-shadow(0 4px 10px rgba(76,174,92,0.35));}
+  .header h1{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--accent2);letter-spacing:0.2px;}
+  .header p{font-size:12px;color:var(--muted);margin-top:5px;}
+  /* Sport chizig'i — imzo motiv: sarlavha ostidagi to'p animatsiyasi */
+  .staff-rule{position:relative;height:18px;margin:14px auto 0;max-width:220px;
+    background-image:repeating-linear-gradient(90deg,rgba(255,255,255,0.35) 0,rgba(255,255,255,0.35) 6px,transparent 6px,transparent 14px);
+    overflow:hidden;}
+  .staff-note{position:absolute;top:-3px;left:-6%;font-size:16px;opacity:0;animation:driftBall 6s linear infinite;}
+  .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(16,28,41,0.96);backdrop-filter:blur(14px);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:8px 0 max(8px,env(safe-area-inset-bottom));z-index:100;box-shadow:0 -8px 24px rgba(2,8,4,0.35);}
+  .nav-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 10px;border-radius:12px;border:none;background:none;cursor:pointer;color:var(--muted);font-size:9px;font-family:inherit;transition:color 0.12s,background 0.12s;}
+  .nav-btn .icon{font-size:20px;transition:transform 0.2s;}
+  .nav-btn.active{color:var(--accent);background:rgba(76,174,92,0.1);}
+  .nav-btn.active .icon{transform:translateY(-2px);}
+  .page-content{padding:16px 16px 90px;}
+  .card{background:linear-gradient(160deg,var(--card) 0%,var(--surface) 100%);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px;cursor:pointer;box-shadow:var(--shadow);transition:transform 0.08s ease;will-change:transform;display:flex;align-items:center;gap:14px;}
+  .card:active{transform:scale(0.98);}
+  .card-icon{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.06);}
+  .card-title{font-size:14px;font-weight:600;color:var(--text);}
+  .card-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+  .welcome-banner{background:linear-gradient(135deg,#1a3a22 0%,#101c1a 100%);border:1px solid var(--border);border-radius:20px;padding:20px;margin-bottom:20px;text-align:center;position:relative;overflow:hidden;}
+  .welcome-banner::before{content:'⚽';position:absolute;top:-10px;right:10px;font-size:80px;opacity:0.08;color:var(--accent);}
+  .welcome-banner h2{font-family:'Playfair Display',serif;font-size:18px;color:var(--accent2);}
+  .welcome-banner p{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.5;}
+  .section-title{font-size:12px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;margin-top:4px;display:flex;align-items:center;gap:8px;}
+  .section-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);}
+  .back-btn{display:inline-flex;align-items:center;gap:4px;margin:16px 16px 0;padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--muted);font-size:12px;cursor:pointer;font-family:inherit;}
+  .empty-state{text-align:center;padding:60px 20px;color:var(--muted);}
+  .empty-state .big{font-size:44px;margin-bottom:12px;display:block;}
+  .q-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px;margin-bottom:12px;}
+  .q-card p.qtext{font-weight:600;margin:0 0 10px;font-size:13.5px;line-height:1.5;}
+  .q-opt{display:block;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:9px 12px;margin-bottom:7px;cursor:pointer;font-size:13px;}
+  .q-opt:active{opacity:0.85;}
+  .q-opt input{margin-right:8px;}
+  .q-opt.correct{background:rgba(76,174,92,0.22)!important;border-color:var(--accent);}
+  .q-opt.wrong{background:rgba(224,92,92,0.18)!important;border-color:var(--red);}
+  #futbol-result{position:sticky;bottom:70px;background:var(--accent);color:#0a1a0e;text-align:center;padding:12px;border-radius:12px;font-size:14px;font-weight:700;margin-top:8px;}
+  .quiz-note{color:var(--muted);font-size:11px;margin-top:14px;text-align:center;}
+  .btn-primary{display:block;width:100%;padding:14px;background:linear-gradient(135deg,var(--accent),#2f7a3a);color:#0a1a0e;font-size:15px;font-weight:700;border:none;border-radius:14px;cursor:pointer;font-family:inherit;box-shadow:0 8px 20px rgba(76,174,92,0.25);margin-top:6px;}
+  .btn-primary:active{opacity:0.9;}
+</style>
+</head>
+<body>
+
+<div id="screen-home" class="screen active">
+  <div class="header">
+    <span class="note-icon">⚽</span>
+    <h1>Sport — Attestatsiya</h1>
+    <p>Jismoniy tarbiya fani bo'yicha attestatsiya platformasi</p>
+    <div class="staff-rule">
+      <span class="staff-note">⚽</span>
+    </div>
+  </div>
+  <div class="page-content" style="padding-top:16px">
+    <div class="welcome-banner">
+      <h2>Xush kelibsiz!</h2>
+      <p>Sport bo'limlaridan birini tanlang va o'quv materiallari bilan tanishing.</p>
+    </div>
+
+    <div class="section-title">Bo'limlar</div>
+
+    <div class="card" onclick="showScreen('darsliklar')">
+      <div class="card-icon" style="background:rgba(76,174,92,0.16);">📚</div>
+      <div>
+        <div class="card-title">Maktab darsliklari</div>
+        <div class="card-sub">Sinflar bo'yicha o'quv materiallari</div>
+      </div>
+    </div>
+
+    <div class="card" onclick="showScreen('voleybol')">
+      <div class="card-icon" style="background:rgba(58,143,209,0.16);">🏐</div>
+      <div>
+        <div class="card-title">Voleybol</div>
+        <div class="card-sub">Qoidalar va texnika</div>
+      </div>
+    </div>
+
+    <div class="card" onclick="showScreen('futbol')">
+      <div class="card-icon" style="background:rgba(224,160,92,0.16);">⚽</div>
+      <div>
+        <div class="card-title">Futbol</div>
+        <div class="card-sub">Qoidalar va texnika</div>
+      </div>
+    </div>
+
+    <div class="card" onclick="showScreen('basketbol')">
+      <div class="card-icon" style="background:rgba(224,92,92,0.16);">🏀</div>
+      <div>
+        <div class="card-title">Basketbol</div>
+        <div class="card-sub">Qoidalar va texnika</div>
+      </div>
+    </div>
+
+    <div class="card" onclick="showScreen('metodika')">
+      <div class="card-icon" style="background:rgba(143,227,154,0.16);">🧾</div>
+      <div>
+        <div class="card-title">Sport metodikasi</div>
+        <div class="card-sub">O'qitish uslubiyoti</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== BO'LIMLAR (test yo'q, faqat bo'sh joy) ===== -->
+
+<div id="screen-darsliklar" class="screen">
+  <button class="back-btn" onclick="showScreen('home')">‹ Orqaga</button>
+  <div class="header" style="padding-top:8px"><span class="note-icon">📚</span><h1>Maktab darsliklari</h1></div>
+  <div class="page-content" style="padding-top:8px">
+    <div class="empty-state"><span class="big">⏳</span>Materiallar tez orada qo'shiladi</div>
+  </div>
+</div>
+
+<div id="screen-voleybol" class="screen">
+  <button class="back-btn" onclick="showScreen('home')">‹ Orqaga</button>
+  <div class="header" style="padding-top:8px"><span class="note-icon">🏐</span><h1>Voleybol</h1></div>
+  <div class="page-content" style="padding-top:8px">
+    <div class="empty-state"><span class="big">⏳</span>Materiallar tez orada qo'shiladi</div>
+  </div>
+</div>
+
+<div id="screen-futbol" class="screen">
+  <button class="back-btn" onclick="showScreen('home')">‹ Orqaga</button>
+  <div class="header" style="padding-top:8px"><span class="note-icon">⚽</span><h1>Futbol</h1></div>
+  <div class="page-content" style="padding-top:8px">
+    <div class="section-title">Variantlar</div>
+    <div class="card" onclick="showScreen('futbol-v1')">
+      <div class="card-icon" style="background:rgba(224,160,92,0.16);">1️⃣</div>
+      <div>
+        <div class="card-title">1-variant</div>
+        <div class="card-sub">30 ta savol</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="screen-futbol-v1" class="screen">
+  <button class="back-btn" onclick="showScreen('futbol')">‹ Orqaga</button>
+  <div class="header" style="padding-top:8px"><span class="note-icon">⚽</span><h1>Futbol — 1-variant</h1><p>30 ta savol. Javob berib bo'lgach, "Natijani ko'rish" tugmasini bosing.</p></div>
+  <div class="page-content" style="padding-top:8px">
+    <div id="futbol-quiz"></div>
+    <button class="btn-primary" onclick="checkFutbolAnswers()">Natijani ko'rish</button>
+    <div id="futbol-result" style="display:none;"></div>
+    <div class="quiz-note">Ba'zi savollarda (5 va 30) rasmlardagi variantlar to'liq/aniq o'qilmagan bo'lishi mumkin — ehtiyot bo'ling.</div>
+  </div>
+</div>
+
+<div id="screen-basketbol" class="screen">
+  <button class="back-btn" onclick="showScreen('home')">‹ Orqaga</button>
+  <div class="header" style="padding-top:8px"><span class="note-icon">🏀</span><h1>Basketbol</h1></div>
+  <div class="page-content" style="padding-top:8px">
+    <div class="empty-state"><span class="big">⏳</span>Materiallar tez orada qo'shiladi</div>
+  </div>
+</div>
+
+<div id="screen-metodika" class="screen">
+  <button class="back-btn" onclick="showScreen('home')">‹ Orqaga</button>
+  <div class="header" style="padding-top:8px"><span class="note-icon">🧾</span><h1>Sport metodikasi</h1></div>
+  <div class="page-content" style="padding-top:8px">
+    <div class="empty-state"><span class="big">⏳</span>Materiallar tez orada qo'shiladi</div>
+  </div>
+</div>
+
+<div class="bottom-nav">
+  <button class="nav-btn active" onclick="showScreen('home')"><span class="icon">🏠</span>Bosh sahifa</button>
+</div>
+
+<script>
+  if (window.Telegram && window.Telegram.WebApp) {
+    try { window.Telegram.WebApp.ready(); window.Telegram.WebApp.expand(); } catch(e){}
+  }
+  function showScreen(id){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.getElementById('screen-'+id).classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+    if(id==='home') document.querySelector('.nav-btn').classList.add('active');
+    window.scrollTo(0,0);
+  }
+
+  // ===== FUTBOL — Test savollari =====
+  const futbolQuestions = [
+  {q:"1. Zamonaviy futbolning vatani qaysi mamlakat?", opts:["Angliya","Braziliya","Fransiya","Ispaniya"], correct:0},
+  {q:"2. Nechanchi yilda futbol Olimpiya o'yinlari dasturiga kiritilgan?", opts:["1908","1896","1900","1904"], correct:2},
+  {q:"3. Futbol bo'yicha birinchi rasmiy qoidalar qaysi yilda tasdiqlangan?", opts:["1863","1896","1900","1908"], correct:0},
+  {q:"4. Futbol bo'yicha birinchi Jahon chempioni qaysi jamoa hisoblanadi?", opts:["Urugvay","Fransiya","Braziliya","Angliya"], correct:0},
+  {q:"5. Futbol bo'yicha qachon va qaerda birinchi Osiyo chempionati bo'lib o'tgan?", opts:["1956-Gonkong","1960-Fransiya","1968-Angliya","1930-Xitoy"], correct:0},
+  {q:"6. Qachon va qaerda birinchi Yevropa chempionati bo'lib o'tgan?", opts:["1960-Fransiya","1958-Ispaniya","1968-Angliya","1930-Germaniya"], correct:0},
+  {q:"7. Qachon va qaerda birinchi Jahon chempionati musobaqalari bo'lib o'tgan?", opts:["Urugvay-1930","Fransiya-1960","Braziliya-1968","Angliya-1900"], correct:0},
+  {q:"8. Xalqaro futbol assotsiatsiyasi (FIFA) qachon va qayerda tashkil topgan?", opts:["1904-Parij","1905-London","1900-Moskva","1908-Madrid"], correct:0},
+  {q:"9. O'zbekiston futbol assotsiatsiyasi qaysi konfederatsiya tarkibiga kiradi?", opts:["AFK","UEFA","KONKAKAF","KAF"], correct:0},
+  {q:"10. Qaysi yilda O'zbekiston futbol terma jamoasi Osiyo o'yinlari chempioni bo'lgan?", opts:["1994 yil","1992 yil","1991 yil","1990 yil"], correct:0},
+  {q:"11. O'zbekistonda qachon va qayerda birinchi bo'lib futbol jamoasi tashkil topgan?", opts:["1912-Qo'qon","1994-Toshkent","1915-Qarshi","1916-Farg'ona"], correct:0},
+  {q:"12. Qaysi yilda O'zbekiston futbol assotsiatsiyasi FIFA tarkibiga kirgan?", opts:["1994 yil","1992 yil","1991 yil","1990 yil"], correct:0},
+  {q:"13. Qaysi yilda O'zbekiston Respublikasida birinchi marotaba futbol bo'yicha milliy chempionat musobaqalari o'tkazilgan?", opts:["1992 yil","1990 yil","1991 yil","1993 yil"], correct:0},
+  {q:"14. Futbol maydonining uzunligi qancha?", opts:["90-120 m","45-90 m","60-90 m","45-120 m"], correct:0},
+  {q:"15. Futbol maydonining eni qancha?", opts:["45-90 m","60-90 m","90-120 m","45-120 m"], correct:0},
+  {q:"16. Xalqaro uchrashuvlarda futbol maydonining uzunligi necha metr bo'lishi kerak?", opts:["100-110 m","90-120 m","60-90 m","45-120 m"], correct:0},
+  {q:"17. Xalqaro uchrashuvlarda futbol maydonining eni necha metr bo'lishi kerak?", opts:["64-75 m","60-90 m","60-74 m","45-65 m"], correct:0},
+  {q:"18. Maydon chizig'ining eni necha sm oshmasligi kerak?", opts:["12 sm","8 sm","10 sm","5 sm"], correct:0},
+  {q:"19. Maydon markazidagi aylananing radiusi qancha?", opts:["9.15 m","9 m","8.30 m","8.15 m"], correct:0},
+  {q:"20. Maydon darvoza o'lchamlarini to'g'ri javobini ko'rsating?", opts:["2,44 x 7,32 m","3,44 x 7,32 m","2.54 x 7,24 m","2,44 x 7,22 m"], correct:0},
+  {q:"21. Futbol to'pi qanday bosimga ega bo'lishi kerak?", opts:["0,6-1,1 atm","0,4-0,9 atm","1,1-1,6 atm","1,6-2,1 atm"], correct:0},
+  {q:"22. Burchak sektorining radiusi qancha bo'lishi kerak?", opts:["1 m","1,5 m","9,15 m","2,15 m"], correct:0},
+  {q:"23. Futbol to'pining aylanasi necha sm?", opts:["68-70 sm","68-74 sm","68-71 sm","65-70 sm"], correct:0},
+  {q:"24. Futbolchining majburiy ekipirovkasi (kiyim-boshi) nimalardan tashkil topgan bo'lishi kerak?", opts:["sport oyoq kiyimi, shorik, futbolka, getra, oyoq himoyagichlari","krossovka, futbolka, himoyagichlar","butsalar, mayka, shipovka, treslar","getra, futbolka, sport oyoq kiyimi, ich kiyim"], correct:0},
+  {q:"25. Futbol maydonini chegaralovchi ikki uzun chiziq qanday nomlanadi?", opts:["Yon chiziqlar","To'g'ri chiziqlar","Tashqi chiziqlar","Darvoza chiziqlari"], correct:0},
+  {q:"26. Futbol maydonini chegaralovchi ikki qisqa chiziq qanday nomlanadi?", opts:["Darvoza chiziqlari","Yon chiziqlar","To'g'ri chiziqlar","Markaziy chiziqlar"], correct:0},
+  {q:"27. Qanday musobaqalar asosiy musobaqalar tarkibiga kiradi?", opts:["Chempionat, kubok, saralash musobaqalari","O'rtoqlik, nazorat musobaqalari","Qisqartirilgan, ko'rgazmali musobaqalar","Mamlakat chempionati, o'rtoqlik musobaqalari"], correct:0},
+  {q:"28. Qanday musobaqalar yordamchi musobaqalar tarkibiga kiradi?", opts:["Nazorat, o'rtoqlik, qisqartirilgan, ko'rgazmali","Mamlakat chempionati, kubok, saralash musobaqalari","Ko'rgazmali, saralash musobaqalari","Qisqartirilgan musobaqalar, kubok musobaqalari"], correct:0},
+  {q:"29. Keltirilgan qaysi musobaqalar futbolni ommalashtirish va sport mahoratini namoish etishga xizmat qiladi?", opts:["Ko'rgazmali","Saralash","Nazorat uchrashuvlari","Qisqartirilgan"], correct:0},
+  {q:"30. Futbol bo'yicha Jahon chempionati musobaqalari qaysi tizimi bo'yicha o'tkaziladi?", opts:["Aralash tizim","Doiraviy tizim","Chiqib ketish tizimi","Har uchchalasi bo'yicha"], correct:3}
+  ];
+
+  function renderFutbolQuiz(){
+    const wrap = document.getElementById('futbol-quiz');
+    if(!wrap || wrap.dataset.rendered) return;
+    wrap.dataset.rendered = '1';
+    futbolQuestions.forEach((item, qi) => {
+      const div = document.createElement('div');
+      div.className = 'q-card';
+      let html = `<p class="qtext">${item.q}</p>`;
+      item.opts.forEach((opt, oi) => {
+        html += `<label class="q-opt" id="fq${qi}o${oi}"><input type="radio" name="fq${qi}" value="${oi}"> ${opt}</label>`;
+      });
+      div.innerHTML = html;
+      wrap.appendChild(div);
+    });
+  }
+
+  function checkFutbolAnswers(){
+    let score = 0;
+    futbolQuestions.forEach((item, qi) => {
+      const selected = document.querySelector(`input[name="fq${qi}"]:checked`);
+      item.opts.forEach((_, oi) => {
+        document.getElementById(`fq${qi}o${oi}`).classList.remove('correct','wrong');
+      });
+      document.getElementById(`fq${qi}o${item.correct}`).classList.add('correct');
+      if(selected){
+        const val = parseInt(selected.value);
+        if(val === item.correct){ score++; }
+        else { document.getElementById(`fq${qi}o${val}`).classList.add('wrong'); }
+      }
+    });
+    const result = document.getElementById('futbol-result');
+    result.style.display = 'block';
+    result.textContent = `Natija: ${score} / ${futbolQuestions.length}`;
+    result.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+
+  renderFutbolQuiz();
+</script>
+</body>
+</html>
