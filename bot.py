@@ -10,7 +10,7 @@ TOKEN = os.environ.get("BOT_TOKEN", "")
 ADMIN_CHAT_ID = 5060424574  # Maslahatchining shaxsiy Telegram ID'si
 
 # Web App (GitHub Pages) manzili — reponi qayta nomlaganda shu yerni yangilang
-WEBAPP_URL = "https://aliiminov1008-max.github.io/jismoniytarbiya/"
+WEBAPP_URL = "https://aliiminov1008-max.github.io/jismoniytarbiya1/"
 
 # O'quvchidan kelgan anonim xabarlarni saqlab turadi:
 # {maslahatchiga_yuborilgan_xabar_id: o'quvchi_chat_id}
