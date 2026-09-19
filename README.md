@@ -1,1 +1,1 @@
-# Maktabmaslahatchisi-
+Jismoniytarbiya 
